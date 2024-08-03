@@ -47,4 +47,10 @@ Then, once they've been digested by faceloader.py and added to the database (you
 
 Ensure you have the necessary rights to use and store facial data, and always use this system responsibly and ethically.
 
+## Bonus script
 
+I added a script called videoexploder.py here. To use it, you'll need to install ffmpeg and yt-dlp 
+
+on a Mac with homebrew, that would be `brew install ffmpeg` and `brew install yt-dlp`. 
+
+What it's for is, if you'd like to search an online video to see if somebody appears in it (say, a CSPAN committee hearing and you're tryin to confirm attendance) you can enter the link of the video. The script will download it and explode it into images of every 2 seconds of video. You can then use the other scripts in this repo to search for the person you're trying to find (or not find, such as it may be).
