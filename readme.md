@@ -13,7 +13,7 @@ FaceBase is a straightforward, Python-based face recognition system that allows 
 
 1. Install dependencies:
    ```
-   pip install deepface mtcnn opencv-python scikit-learn
+   pip install -r requirements.txt
    ```
 
 2. Add faces to the database:
