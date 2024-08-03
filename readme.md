@@ -2,6 +2,8 @@
 
 FaceBase is a straightforward, Python-based face recognition system that allows you to store face embeddings in a database and perform facial recognition on new images.
 
+I will likely make a verison of this with a user interface for my team; as described here, you'll need to be somewhat familiar with running python scripts on your computer in order to get it working. If you're on a mac and you don't offhand know whether a command should be run as python or python3, you've got some reading to do before you're ready to get this working. 
+
 ## Features
 
 - Robust face detection using MTCNN
@@ -28,7 +30,7 @@ FaceBase is a straightforward, Python-based face recognition system that allows 
 
 ## How It Works
 
-First you'll want to take some images of the person you're searching for, and feed them to faceloader.py
+First you'll want to take some images of the person you're searching for, crop them to be tight shots of the persons face, put them all in one folder,  and feed them to faceloader.py
 
 `faceloader.py` detects faces in images, generates embeddings, and stores them in a SQLite database.
 
