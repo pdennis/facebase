@@ -5,6 +5,7 @@ from deepface import DeepFace
 from sklearn.metrics.pairwise import cosine_similarity
 from mtcnn import MTCNN
 import cv2
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 def cosine_sim(a, b):
     return cosine_similarity([a], [b])[0][0]
@@ -72,14 +73,21 @@ def process_image(image_path, face_detector, recognition_model, confidence_thres
         print(f"Error processing {image_path}: {str(e)}")
         return None
 
-def find_matches(folder_path, embeddings_dict, threshold=0.5, recognition_model="Facenet512", confidence_threshold=0.7):
+def process_image_wrapper(args):
+    image_path, face_detector, recognition_model, confidence_threshold = args
+    return image_path, process_image(image_path, face_detector, recognition_model, confidence_threshold)
+
+def find_matches(folder_path, embeddings_dict, threshold=0.5, recognition_model="Facenet512", confidence_threshold=0.7, max_workers=None):
     matches = []
     face_detector = MTCNN()
     
-    for image_name in os.listdir(folder_path):
-        image_path = os.path.join(folder_path, image_name)
-        if os.path.isfile(image_path):
-            new_embeddings = process_image(image_path, face_detector, recognition_model, confidence_threshold)
+    image_paths = [os.path.join(folder_path, image_name) for image_name in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, image_name))]
+    
+    with ProcessPoolExecutor(max_workers=max_workers) as executor:
+        future_to_path = {executor.submit(process_image_wrapper, (path, face_detector, recognition_model, confidence_threshold)): path for path in image_paths}
+        
+        for future in as_completed(future_to_path):
+            image_path, new_embeddings = future.result()
             if new_embeddings is None or len(new_embeddings) == 0:
                 continue
             
@@ -114,12 +122,14 @@ if __name__ == "__main__":
     similarity_threshold = 0.5
     face_detection_confidence = 0.7
     recognition_model = "Facenet512"
+    max_workers = None  # Set to a specific number if you want to limit the number of processes
     
     # Find matches in the folder
     matches = find_matches(folder_path, embeddings_dict, 
                            threshold=similarity_threshold, 
                            recognition_model=recognition_model, 
-                           confidence_threshold=face_detection_confidence)
+                           confidence_threshold=face_detection_confidence,
+                           max_workers=max_workers)
     
     # Print summary of matches
     if matches:
